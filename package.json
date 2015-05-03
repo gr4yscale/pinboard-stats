@@ -1,0 +1,19 @@
+{
+  "name": "pinboard-stats",
+  "version": "0.0.1",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "4.12.3",
+    "mongoose": "3.8.x",
+    "body-parser": "^1.10.2",
+    "cookie-parser": "~1.3.3",
+    "debug": "~2.1.1",
+    "method-override": "^2.3.1",
+    "morgan": "~1.5.1",
+    "serve-favicon": "~2.2.0"
+  }
+}
