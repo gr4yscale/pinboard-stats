@@ -14,7 +14,8 @@ var Pinboard = require('./pinboard');
 pinboard = new Pinboard();
 
 pinboard.fetchData();
-pinboard.updateTags();
+var tags = pinboard.tagsForPosts(pinboard.posts);
+console.log(tags);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

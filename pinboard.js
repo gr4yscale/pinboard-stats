@@ -23,24 +23,24 @@ Pinboard.prototype = {
 		// });
 	},
 
-	updateTags: function() {
-		_.forEach(this.posts, function(post) {
+	tagsForPosts: function(posts) {
+		var tags = [];
+		_.forEach(posts, function(post) {
 			_.forEach(post.tags.split(' '), function(tag) {
 
-				if (!(tag in this.tags)) {
-					this.tags[tag] = {"count" : 1, "start_date" : new Date()}
+				if (!(tag in tags)) {
+					tags[tag] = {"count" : 1, "start_date" : new Date()}
 				} else {
-					var theTag = this.tags[tag];
 					var postDate = new Date(post.time);
-					var tagEarliestStartDate = theTag['start_date'];
+					var tagEarliestStartDate = tags[tag]['start_date'];
 
-					theTag['count'] += 1;
-					theTag['start_date'] = (postDate < tagEarliestStartDate) ? postDate : tagEarliestStartDate;
+					tags[tag]['count'] += 1;
+					tags[tag]['start_date'] = (postDate < tagEarliestStartDate) ? postDate : tagEarliestStartDate;
 				}
 			}, this);
 		}, this);
 
-		console.log(this.tags);
+		return tags;
 	}
 
 };
