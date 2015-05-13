@@ -24,24 +24,47 @@ Pinboard.prototype = {
 	},
 
 	tagsForPosts: function(posts) {
-		var tags = [];
+
+		// super messy - I'm building a hashmap to ensure uniqueness, then iterating on the keys to build a proper collection so that lodash is happy
+		// I'll have to fix this later...
+
+		var tagsHashmap = [];
+
 		_.forEach(posts, function(post) {
 			_.forEach(post.tags.split(' '), function(tag) {
 
-				if (!(tag in tags)) {
-					tags[tag] = {"count" : 1, "start_date" : new Date()}
+				if (!(tag in tagsHashmap)) {
+					tagsHashmap[tag] = {'tag': tag, 'count' : 1, 'start_date' : new Date()}
 				} else {
 					var postDate = new Date(post.time);
-					var tagEarliestStartDate = tags[tag]['start_date'];
+					var tagEarliestStartDate = tagsHashmap[tag]['start_date'];
 
-					tags[tag]['count'] += 1;
-					tags[tag]['start_date'] = (postDate < tagEarliestStartDate) ? postDate : tagEarliestStartDate;
+					tagsHashmap[tag]['tag'] = tag;
+					tagsHashmap[tag]['count'] += 1;
+					tagsHashmap[tag]['start_date'] = (postDate < tagEarliestStartDate) ? postDate : tagEarliestStartDate;
 				}
-			}, this);
-		}, this);
+			});
+		});
 
-		return tags;
-	}
+		var tags = [];
+		for (var tag in tagsHashmap) {
+			tags.push(tagsHashmap[tag]);
+		}
+
+		return _.sortBy(tags, 'count').reverse();;
+	},
+
+	postsForDateRange: function(posts, startDate, endDate) {
+		return _.chain(posts)
+			.filter(function(post) {
+				var postDate = new Date(post.time);
+				return postDate > startDate && postDate < endDate;
+			})
+			.sortBy('time')
+			.value();
+	},
+
+	// time series endpoint
 
 };
 
