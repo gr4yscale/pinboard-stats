@@ -1,0 +1,3 @@
+[submodule "pinboard-visualization"]
+	path = pinboard-visualization
+	url = git@github.com:gr4yscale/pinboard-visualization.git
