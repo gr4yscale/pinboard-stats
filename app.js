@@ -1,16 +1,14 @@
+// grab variables from the .env (namely the pinboard oauth token)
+require('dotenv').load();
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
 var pinboardRoutes = require('./routes/pinboard.js');
 var app = express();
-
-var PinboardService = require('./pinboard_service');
-pinboard_service = new PinboardService();
-pinboard_service.fetchData();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// routes setup
 app.use('/', express.static('pinboard-visualization'));
 app.use('/pinboard', pinboardRoutes);
 
@@ -33,7 +32,6 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
-
 
 // error handlers
 
@@ -60,5 +58,18 @@ app.use(function(err, req, res, next) {
 });
 
 
+// start fetching data from Pinboard API
+
+var PinboardService = require('./pinboard_service');
+pinboard_service = new PinboardService();
+
+app.set('pinboard_service', pinboard_service);
+
+setInterval(function() {
+  console.log('fetching data');
+  pinboard_service.fetchData();  
+}, 1000 * 60 * 60);
+
+pinboard_service.fetchData();
 
 module.exports = app;

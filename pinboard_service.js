@@ -1,5 +1,5 @@
-var request = require('request');
 var _ = require('lodash');
+var request = require('request');
 var fs = require('fs');
 var moment = require('moment');
 
@@ -14,14 +14,14 @@ PinboardService.prototype = {
 
 	fetchData: function() {
 		// fetch data locally during dev; hit pinboard API later
-		this.posts = JSON.parse(fs.readFileSync('./posts.json', 'utf8'));
-
-		// request('https://api.pinboard.in/v1/posts/all?auth_token=gr4yscale:[redacted]&format=json', function (error, response, body) {
-		// 	if (!error && response.statusCode == 200) {
-		// 		this.posts = JSON.parse(body);
-		// 		console.log(this.posts[0]);
-		// 	}
-		// });
+		// this.posts = JSON.parse(fs.readFileSync('./posts.json', 'utf8'));
+		var _this = this;
+		var token = process.env.PINBOARD_OAUTH_TOKEN;
+		request('https://api.pinboard.in/v1/posts/all?auth_token=gr4yscale:' + token + '&format=json', function (error, response, body) {
+			if (!error && response.statusCode == 200) {
+				_this.posts = JSON.parse(body);
+			}
+		});
 	},
 
 	tagsForPosts: function(posts) {
@@ -134,9 +134,9 @@ PinboardService.prototype = {
 			counts[i] = cumulativeTagCountArray;
 		}
 
-		var finalObject = { "tags" : sortedTags, "counts" : counts} ;
+		// this.displayAndWriteJSONToFile(finalObject, './theJSON.json');
 
-		this.displayAndWriteJSONToFile(finalObject, './theJSON.json');
+		return { "tags" : sortedTags, "counts" : counts};
 	},
 
 	displayAndWriteJSONToFile: function(obj, fileName) {
