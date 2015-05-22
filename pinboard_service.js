@@ -99,7 +99,8 @@ PinboardService.prototype = {
 		// sort them by total cumulative count (what it ends up being on the end date)
 
 		var postsFiltered = this.postsForDateRange(posts, startDate, endDate);
-		var sortedTagCounts = this.sortedTagCountsForPosts(postsFiltered);
+		var sortedTagCounts = this.sortedTagCountsForPosts(postsFiltered).slice(0, numTags + 1);
+
 		var sortedTags = [];
 
 		for (var i = 0; i < sortedTagCounts.length; i++) {
@@ -112,7 +113,7 @@ PinboardService.prototype = {
 
 		var daysBetweenStartAndEnd = end.diff(start, "days");
 
-		var counts = {};
+		var timeSeries = {};
 
 		for (var i = 1; i < daysBetweenStartAndEnd + 1; i++) {
 
@@ -131,12 +132,10 @@ PinboardService.prototype = {
 				});
 			});
 
-			counts[i] = cumulativeTagCountArray;
+			timeSeries[i] = cumulativeTagCountArray;
 		}
 
-		// this.displayAndWriteJSONToFile(finalObject, './theJSON.json');
-
-		return { "tags" : sortedTags, "counts" : counts};
+		return { "tags" : sortedTags, "timeSeries" : timeSeries, "dayCount" : daysBetweenStartAndEnd };
 	},
 
 	displayAndWriteJSONToFile: function(obj, fileName) {
