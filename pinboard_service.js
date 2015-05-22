@@ -136,7 +136,7 @@ PinboardService.prototype = {
 
 		var finalObject = { "tags" : sortedTags, "counts" : counts} ;
 
-		this.displayAndWriteJSONToFile(finalObject, './theJSON4.json');
+		this.displayAndWriteJSONToFile(finalObject, './theJSON.json');
 	},
 
 	displayAndWriteJSONToFile: function(obj, fileName) {
