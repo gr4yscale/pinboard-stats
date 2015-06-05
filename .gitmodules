@@ -1,3 +1,4 @@
 [submodule "pinboard-visualization"]
 	path = pinboard-visualization
-	url = git@github.com:gr4yscale/pinboard-visualization.git
+  url = git@github.com:gr4yscale/pinboard-visualization.git
+  branch = 3d-plot
