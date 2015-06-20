@@ -94,13 +94,13 @@ PinboardService.prototype = {
 			.value();
 	},
  
-	timeSeriesPacked: function(posts, startDate, endDate, numTags) {
+
+	timeSeriesPacked: function(posts, startDate, endDate, numTags, cumulative, daysPerInterval) {
 
 		// find out all tags for entire date range
 		// sort them by total cumulative count (what it ends up being on the end date)
 
-		var postsFiltered = this.postsForDateRange(posts, startDate, endDate);
-		var sortedTagCounts = this.sortedTagCountsForPosts(postsFiltered).slice(0, numTags + 1);
+		var sortedTagCounts = this.sortedTagCountsForPosts(posts).slice(0, numTags + 1);
 
 		var sortedTags = [];
 
@@ -116,17 +116,23 @@ PinboardService.prototype = {
 
 		var timeSeries = {};
 
-		for (var i = 1; i < daysBetweenStartAndEnd + 1; i++) {
+		for (var i = 0; i < daysBetweenStartAndEnd + 1; i = i + daysPerInterval) {
 
 			var cumulativeTagCountArray = new Array(sortedTags.length);
 			for (var j = 0; j < cumulativeTagCountArray.length; j++) {
 				cumulativeTagCountArray[j] = 0;
 			}
 
-			var currentDate = moment(startDate).add(i, 'days');
-			var postsUntilCurrentDate = this.postsForDateRange(posts, startDate, currentDate);
+      var currentDate = moment(startDate).add(i, 'days');
+      var postsForDateRange;
 
-			_.forEach(postsUntilCurrentDate, function(post) {
+      if (cumulative === true) {
+        postsForDateRange = this.postsForDateRange(posts, startDate, currentDate);
+      } else {
+        postsForDateRange = this.postsForDateRange(posts, currentDate, moment(currentDate).add(daysPerInterval, 'days'));
+      }
+
+			_.forEach(postsForDateRange, function(post) {
 				_.forEach(post.tags.split(' '), function(tag) {
 					var tagIndex = sortedTags.indexOf(tag); // if not found, don't add tag (it was blacklisted)
 					cumulativeTagCountArray[tagIndex]++;
@@ -136,8 +142,9 @@ PinboardService.prototype = {
 			timeSeries[i] = cumulativeTagCountArray;
 		}
 
-		return { "tags" : sortedTags, "timeSeries" : timeSeries, "dayCount" : daysBetweenStartAndEnd };
+		return { "tags" : sortedTags, "timeSeries" : timeSeries, "sampleCount" : daysBetweenStartAndEnd };
 	},
+
 
 	displayAndWriteJSONToFile: function(obj, fileName) {
 
