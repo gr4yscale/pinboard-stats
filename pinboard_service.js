@@ -142,7 +142,7 @@ PinboardService.prototype = {
 			timeSeries[i] = cumulativeTagCountArray;
 		}
 
-		return { "tags" : sortedTags, "timeSeries" : timeSeries, "sampleCount" : daysBetweenStartAndEnd };
+		return { "tags" : sortedTags, "timeSeries" : timeSeries, "sampleCount" : daysBetweenStartAndEnd, "daysPerInterval" : daysPerInterval};
 	},
 
 
